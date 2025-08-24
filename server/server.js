@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const http = require('http');
+const { Server } = require('socket.io');
 
 const { connectDB } = require('./config/database');
 const db = require('./models'); // This now imports the fully configured db object
@@ -57,8 +58,7 @@ const startApp = async () => {
     
     // 5. Set up the WebSocket (socket.io) server
     const io = new Server(server, { cors: corsOptions });
-    app.set('io', io); // Make the 'io' instance available to our controllers
-    
+    app.set('io', io);
     io.on('connection', (socket) => {
       console.log('A user connected via WebSocket:', socket.id);
       socket.on('disconnect', () => {
