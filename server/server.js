@@ -50,9 +50,20 @@ const startApp = async () => {
      // This middleware is essential. It tells Express how to read the JSON data
     // sent from your frontend forms. It MUST come before your routes.
     
+    const allowedOrigins = [
+        'http://localhost:5173',
+        process.env.edu-sync-flame.vercel.app // This will be your Vercel URL
+    ];
+
     const corsOptions = {
-      origin: process.env.CLIENT_URL || "http://localhost:5173",
-      methods: ["GET", "POST", "PUT", "DELETE"]
+        origin: (origin, callback) => {
+            // Allow requests with no origin (like mobile apps or curl requests)
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error('Not allowed by CORS'));
+            }
+        }
     };
     app.use(cors(corsOptions));
     
