@@ -2,7 +2,7 @@
 
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/college';
+const API_URL = 'https://edusync-api-yyjg.onrender.com/api/college';
 
 // Helper to get the token from localStorage
 const getToken = () => localStorage.getItem('token');

@@ -3,8 +3,8 @@
 import axios from 'axios';
 
 // Base URL for structure-related calls
-const STRUCTURE_API_URL = 'http://localhost:5000/api/timetable-structure';
-const TIMETABLE_API_URL = 'http://localhost:5000/api/timetable';
+const STRUCTURE_API_URL = 'https://edusync-api-yyjg.onrender.com/api/timetable-structure';
+const TIMETABLE_API_URL = 'https://edusync-api-yyjg.onrender.com/api/timetable';
 
 const apiClient = axios.create();
 

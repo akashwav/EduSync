@@ -4,7 +4,7 @@ import axios from 'axios';
 
 // This creates a dedicated client that ALWAYS points to your backend server
 const apiClient = axios.create({
-  baseURL: 'http://localhost:5000/api', // The correct backend URL
+  baseURL: 'https://edusync-api-yyjg.onrender.com/api', // The correct backend URL
 });
 
 // This function will now correctly send a POST request to http://localhost:5000/api/auth/register

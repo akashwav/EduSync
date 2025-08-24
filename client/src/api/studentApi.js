@@ -1,6 +1,6 @@
 // File: client/src/api/studentApi.js
 import axios from 'axios';
-const API_URL = 'http://localhost:5000/api/students';
+const API_URL = 'https://edusync-api-yyjg.onrender.com/api/students';
 const apiClient = axios.create({ baseURL: API_URL });
 
 apiClient.interceptors.request.use((config) => {

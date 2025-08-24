@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/qr';
+const API_URL = 'https://edusync-api-yyjg.onrender.com/api/qr';
 
 const apiClient = axios.create({
   baseURL: API_URL,

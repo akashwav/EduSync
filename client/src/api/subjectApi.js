@@ -3,7 +3,7 @@
 import axios from 'axios';
 
 // The base URL will be for courses, as subjects are a nested resource
-const API_URL = 'http://localhost:5000/api/courses';
+const API_URL = 'https://edusync-api-yyjg.onrender.com/api/courses';
 
 const apiClient = axios.create();
 

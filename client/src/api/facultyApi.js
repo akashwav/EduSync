@@ -2,7 +2,7 @@
 
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/faculty';
+const API_URL = 'https://edusync-api-yyjg.onrender.com/api/faculty';
 
 const apiClient = axios.create({
   baseURL: API_URL,
