@@ -52,7 +52,36 @@ const loginUser = async (req, res) => {
   }
 };
 
-const registerSuperadmin = async (req, res) => { /* ... (no change) ... */ };
+const registerSuperadmin = async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        // Check if a Superadmin already exists to prevent creating more than one
+        const superadminExists = await User.findOne({ where: { role: 'Superadmin' } });
+        if (superadminExists) {
+            return res.status(403).json({ message: 'A Superadmin account already exists.' });
+        }
+
+        // Create the new user with the Superadmin role
+        const user = await User.create({
+            email,
+            password,
+            role: 'Superadmin',
+            collegeId: null // Superadmin is not associated with any college
+        });
+
+        res.status(201).json({
+            id: user.id,
+            email: user.email,
+            role: user.role,
+            token: generateToken(user, user.email), // generateToken needs name
+        });
+
+    } catch (error) {
+        console.error("Error registering superadmin:", error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
+
 const registerAdmin = async (req, res) => { /* ... (no change) ... */ };
 
 module.exports = {
