@@ -1,0 +1,21 @@
+{
+  "appId": "com.edusync.app",
+  "appName": "EduSync",
+  "webDir": "dist", 
+  "bundledWebRuntime": false,
+  "server": {
+    "url": "*",
+    "androidScheme": "https",
+    "cleartext": true
+  },
+  "assets": {
+    "icon": "resources/icon.png",
+    "splash": "resources/splash.png"
+  },
+  "BarcodeScannerMLKit": {
+      "cameraPermission": "To scan QR codes for attendance"
+  },
+  "CapacitorHttp": {
+      "enabled": "true"
+  }
+}

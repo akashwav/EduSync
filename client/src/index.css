@@ -1,0 +1,18 @@
+/* File: client/src/index.css */
+@import "tailwindcss";
+
+* {
+  font-family: "inter-variable", sans-serif;
+  font-variation-settings: "slnt" 0, "wght" 400;
+}
+
+#root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden; /* Prevent body scrolling */
+}
