@@ -3,6 +3,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
+const http = require('http');
 
 const { connectDB } = require('./config/database');
 const db = require('./models'); // This now imports the fully configured db object
