@@ -7,9 +7,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 
 const { connectDB } = require('./config/database');
-const db = require('./models'); // Sequelize models + sequelize instance
-
-// --- Routes ---
+const db = require('./models'); // This now imports the fully configured db object
 const timetableRoutes = require('./routes/timetableRoutes');
 const classroomRoutes = require('./routes/classroomRoutes');
 const facultyDashboardRoutes = require('./routes/facultyDashboardRoutes');
@@ -24,9 +22,8 @@ const passwordResetRoutes = require('./routes/passwordResetRoutes');
 const adminActionsRoutes = require('./routes/adminActionsRoutes');
 const classroomAssignmentRoutes = require('./routes/classroomAssignmentRoutes');
 const geofenceRoutes = require('./routes/geofenceRoutes');
-const qrRoutes = require('./routes/qrRoutes'); // you had this imported; now it's mounted too
+const qrRoutes = require('./routes/qrRoutes'); 
 
-// ---- Global process error guards ----
 process.on('unhandledRejection', (reason, promise) => {
   console.error('!!! UNHANDLED REJECTION AT:', promise, 'REASON:', reason);
 });
@@ -38,42 +35,39 @@ process.on('uncaughtException', (error) => {
 // --- Main Application Function ---
 const startApp = async () => {
   try {
-    // 1) Connect to DB
+    // 1. First, connect to the database.
     await connectDB();
     console.log('✅ Database connection successful.');
 
-    // 2) Sync all models (fixes "sync is not defined")
+    // 2. Then, sync all models. This ensures all tables and associations are ready.
     await db.sequelize.sync({ alter: true });
     console.log('✅ All models were synchronized successfully.');
 
-    // 3) Create Express app + HTTP server (for socket.io)
+    // 3. NOW, create the Express app.
     const app = express();
     const server = http.createServer(app);
 
-    // 4) CORS
-    // Put your deployed frontend URL in .env as: CLIENT_URL=https://edu-sync-flame.vercel.app
+     // This middleware is essential. It tells Express how to read the JSON data
+    // sent from your frontend forms. It MUST come before your routes.
+    
     const allowedOrigins = [
-      'http://localhost:5173',
-      process.env.CLIENT_URL
-    ].filter(Boolean); // remove undefined
+        'http://localhost:5173',
+        process.env.edu-sync-flame.vercel.app // This will be your Vercel URL
+    ];
 
     const corsOptions = {
-      origin: (origin, callback) => {
-        // allow REST tools / mobile apps / SSR with no origin
-        if (!origin || allowedOrigins.includes(origin)) {
-          return callback(null, true);
+        origin: (origin, callback) => {
+            // Allow requests with no origin (like mobile apps or curl requests)
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error('Not allowed by CORS'));
+            }
         }
-        return callback(new Error('Not allowed by CORS'));
-      },
-      credentials: true,
-      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization']
     };
-
     app.use(cors(corsOptions));
-    app.options('*', cors(corsOptions)); // handle preflight
-
-    // 5) Socket.io (attach to the same HTTP server)
+    
+    // 5. Set up the WebSocket (socket.io) server
     const io = new Server(server, { cors: corsOptions });
     app.set('io', io);
     io.on('connection', (socket) => {
@@ -82,12 +76,12 @@ const startApp = async () => {
         console.log('User disconnected:', socket.id);
       });
     });
-
-    // 6) Body parsers
+    
+    
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
 
-    // 7) Routes
+    // 5. Define API routes AFTER the database is ready.
     app.use('/api/auth', require('./routes/authRoutes'));
     app.use('/api/college', require('./routes/collegeRoutes'));
     app.use('/api/courses', require('./routes/courseRoutes'));
@@ -97,27 +91,26 @@ const startApp = async () => {
     app.use('/api/timetable', timetableRoutes);
     app.use('/api/classrooms', classroomRoutes);
     app.use('/api/faculty-dashboard', facultyDashboardRoutes);
-    app.use('/api/attendance', attendanceRoutes);
+    app.use('/api/attendance', attendanceRoutes); 
     app.use('/api/student-dashboard', studentDashboardRoutes);
     app.use('/api/reports', reportsRoutes);
     app.use('/api/notifications', notificationRoutes);
-    app.use('/api/timetable/edit', manualEditRoutes);
+    app.use('/api/timetable/edit', manualEditRoutes); 
     app.use('/api/superadmin', superadminRoutes);
     app.use('/api/admin-dashboard', adminDashboardRoutes);
     app.use('/api/password', passwordResetRoutes);
-    app.use('/api/admin-actions', adminActionsRoutes);
+    app.use('/api/admin-actions', adminActionsRoutes); 
     app.use('/api/classroom-assignments', classroomAssignmentRoutes);
     app.use('/api/geofence', geofenceRoutes);
-    app.use('/api/qr', qrRoutes); // ✅ mounted now
 
-    // Simple health check
+
     app.get('/api/health', (req, res) => {
       res.status(200).json({ message: 'Server is up and running!' });
     });
 
-    // 8) Start server (IMPORTANT: use server.listen, not app.listen)
+    // 6. Start the server.
     const PORT = process.env.PORT || 5000;
-    server.listen(PORT, () => {
+    app.listen(PORT, () => {
       console.log(`🚀 Server is listening on port ${PORT}`);
     });
 
